@@ -1,21 +1,48 @@
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+char user[50], pass[50];
+char session_us[50];
+int session_log = 0;
+
+void explode(char text[100], char data[5][50], char separator, int *firstI){
+	int i, secondI = 0;
+	memset(data[0], 0, sizeof(data[0]));
+	for(i=0; i<strlen(text); i++)
+	{
+		if(text[i] == separator)
+		{
+			*firstI += 1;
+			secondI = 0;
+			memset(data[*firstI], 0, sizeof(data[*firstI]));
+		}
+		else if(text[i] != '\n' || text[i] != '\0')
+		{
+			data[*firstI][secondI] = text[i];
+			secondI++;
+		}
+	}
+}
 
 int firstMenu () {
 	int pilih;
-	system ("cls");
-	printf ("\n___________________ TO MART ___________________");
-	printf ("\n===============================================");
-	printf ("\n                 1. Login");
-	printf ("\n                 2. Registrasi");
-	printf ("\n          ---------------------------");
-	printf ("\n                ---> "); scanf ("%d", &pilih);
+	printf("\n\n\n\n\n\n");
+	printf("                 ___________________ TO MART _________________\n");
+	printf("                 =============================================\n");
+	printf("                                  1. Login          \n");
+	printf("                                  2. Registrasi     \n");
+	printf("                           ------------------------ \n");
+	printf("                                 ---> "); scanf("%d", &pilih);
 	return pilih;
 }
-int adminMenu () {
+int Menu () {
 	int pilih;
-	if (/*anda admin dan bukan user*/) {
+	// admin menu
+	if (session_log == 2) {
 		system ("cls");
 		printf ("=======================================================\n");
 		printf ("                        TO MART\n");
@@ -31,6 +58,7 @@ int adminMenu () {
 		printf ("==========================================\n");
 		printf ("Masukkan Pilihan : "); scanf ("%d", &pilih);
 	}
+	// user menu
 	else {
 		system ("cls");
 		printf ("==========================================\n");
@@ -58,15 +86,77 @@ void login () {
 	printf ("\n                ---> "); fflush (stdin); gets (password);
 	//proses dan operasi file
 }
+
 void registrasi () {
 	system ("cls");
 	printf ("\nREGISTRASI");
-	printf ("\n=============================================")
+	printf ("\n=============================================\n");
 	//operasi file
-	printf ("\nMasukkan Nama      : "); fflush (stdin); gets ();
-	printf ("\nMasukkan Username  : "); fflush (stdin); gets ();
-	printf ("\nMasukkan Password  : "); fflush (stdin); gets ();
-	printf ("\nUlangi Password    : "); fflush (stdin); gets ();
+	char nama[50], rep_pass[50], join[50];
+	bool isThere;
+	char buffer[255];
+	char data[3][50];
+	int jmlData;
+	FILE *fptr;
+	
+	do
+	{
+		isThere = false;
+		fflush(stdin);
+		printf(" Masukan Nama      : "); gets(nama); fflush(stdin);
+		printf(" Masukan Username  : "); gets(user); fflush(stdin);
+		printf(" Masukan Password  : "); gets(pass); fflush(stdin);
+		printf(" Ulangi Password   : "); gets(rep_pass); fflush(stdin); 
+		
+		if(strcmp(pass, rep_pass) == 0)
+		{
+			fptr = fopen("file/akun.dat", "r");
+			while(!feof(fptr))
+			{
+				jmlData = 0;
+				fgets(buffer, sizeof(buffer), fptr);
+				explode(buffer, data, '|', &jmlData);
+				
+				if(strcmp(data[0], user) == 0)
+				{
+					isThere = true;
+					system("cls");
+					printf("\n REGISTRASI \n");
+					printf(" ============================================= \n");
+					printf("\n Maaf, Username sudah terpakai! \n");
+					printf(" Gunakan Username lainnya!!! \n\n");
+				}
+			}
+			fclose(fptr);
+			
+			if(isThere == false)
+			{
+				char gabung[60] = "";
+				fptr = fopen("file/akun.dat", "a");
+				// menggabungkan string
+				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "|"); strcat(gabung, pass); strcat(gabung, "|"); strcat(gabung, "1");
+				fputs(gabung, fptr);
+				fclose(fptr);
+				
+				fptr = fopen("file/saldo.dat", "a");
+				memset(gabung, 0, sizeof(gabung));
+				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "|"); strcat(gabung, nama); strcat(gabung, "|"); strcat(gabung, "0");
+				fputs(gabung, fptr);
+				fclose(fptr);
+			}
+		}
+		else
+		{
+			system("cls");
+			printf("\n REGISTRASI \n");
+			printf(" ============================================= \n");
+			printf(" Password tidak singkron!! \n\n");
+			isThere = 1;
+			continue;
+		}
+	} while (isThere == 1);
+	system("cls");
+	printf("\n\n                               Registrasi Berhasil");
 }
 void showList () {
 	printf ("\nNULL\n");
@@ -112,26 +202,27 @@ void showLaporan (int session_us) {
 }
 
 int main () {
-	int pilih, session_us, session_log;
+	int pilih;
 	char ulang;
 	bool repeat = true;
 	while (repeat == true) {
 		pilih = firstMenu ();
 		if (pilih == 1) {
 			repeat = false;
-			login ();
+			login();
 		}
 		else if (pilih == 2) {
-			registrasi ();
+			registrasi();
 		}
 		else {
-			printf ("\nNot Found!\n");
+			printf("\nNot Found!\n");
 		}
 	}
-	if (session_us != NULL && session_log == 2) {
+	
+	if (strcmp(session_us, "") != 0 && session_log == 2) {
 		do {
 			showList ();
-			pilih = adminMenu ();
+			pilih = Menu();
 			if (pilih == 1) {
 				jualBarang ();
 				troli ();
@@ -158,10 +249,10 @@ int main () {
 		}
 		while (ulang == 'y' || ulang == 'Y');
 	}
-	else if (session_us != NULL && session_log == 1) {
+	else if (strcmp(session_us, "") != 0 && session_log == 1) {
 		do {
 			showList ();
-			pilih = adminMenu ();
+			pilih = Menu();
 			if (pilih == 1) {
 				beliBarang ();
 			}
@@ -175,7 +266,7 @@ int main () {
 				addSaldo ();
 			}
 			else if (pilih == 5) {
-				showLaporan (session_us);
+//				showLaporan(session_us);
 			}
 			else {
 				jualBarang ();
