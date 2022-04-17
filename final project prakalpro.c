@@ -74,16 +74,46 @@ int Menu () {
 }
 void login () {
 	char username[50], password[50];
-	system ("cls");
-	printf ("\n___________________ TO MART ___________________");
-	printf ("\n===============================================");
-	printf ("\n                Masukkan Username :");
-	printf ("\n            ---------------------------");
-	printf ("\n                ---> "); fflush (stdin); gets (username);
-	printf ("\n                Masukkan Password :");
-	printf ("\n            ---------------------------");
-	printf ("\n                ---> "); fflush (stdin); gets (password);
-	//proses dan operasi file
+	char data[3][50];
+	char buffer[255];
+	bool isThere;
+	FILE *fptr;
+	
+	system("cls");
+	do
+	{
+		isThere = false;
+		fflush(stdin);
+		printf ("\n                 ____________________ TO MART ________________");
+		printf ("\n                 =============================================");
+		printf ("\n                                 Masukan Username : ");
+		printf ("\n                             ------------------------");
+		printf ("\n                                 ---> "); gets (username); fflush (stdin);
+		printf ("\n                    ========================================");
+		printf ("\n                                 Masukan Password : ");
+		printf ("\n                            --------------------------");
+		printf ("\n                                 ---> "); gets (password); fflush (stdin); 
+		
+		fptr = fopen("file/akun.dat", "r");
+		while(!feof(fptr))
+		{
+			fgets(buffer, sizeof(buffer), fptr);
+			explode(buffer, data, '|');
+			if(strcmp(data[0], username) == 0 && strcmp(data[1], password) == 0)
+			{
+				isThere = true;
+				strcpy(session_us, data[0]);
+				session_log = atoi(data[2]);
+			}
+		}
+		fclose(fptr);
+		
+		if(isThere == false)
+		{
+			system("cls");
+			printf("\n                            Username dan Password Salah\n");
+		}
+	} while (isThere == false);
 }
 
 void registrasi () {
