@@ -9,7 +9,7 @@ char user[50], pass[50];
 char session_us[50];
 int session_log = 0;
 
-void explode(char text[100], char data[5][50], char separator){
+void explode(char text[100], char data[5][100], char separator){
 	int i, firstI = 0, secondI = 0;
 	memset(data[0], 0, sizeof(data[0]));
 	for(i=0; i<strlen(text); i++)
@@ -74,7 +74,7 @@ int Menu () {
 }
 void login () {
 	char username[50], password[50];
-	char data[3][50];
+	char data[3][100];
 	char buffer[255];
 	bool isThere;
 	FILE *fptr;
@@ -124,7 +124,7 @@ void registrasi () {
 	char nama[50], rep_pass[50], join[50];
 	bool isThere;
 	char buffer[255];
-	char data[3][50];
+	char data[3][100];
 	FILE *fptr;
 	
 	do
@@ -194,8 +194,14 @@ void jualBarang () {
 void troli () {
 	printf ("\nNULL\n");
 }
-void addBarang () {
-	printf ("\nNULL\n");
+void addBarang(char *code, char *nm_barang, int *stok, int *harga) {
+	char gabung[60] = "", str_stok[10], str_harga[10];
+	FILE *fptr = fopen("file/data.dat", "a");
+	itoa(*stok, str_stok, 10);
+	itoa(*harga, str_harga, 10);
+	strcat(gabung, "\n"); strcat(gabung, code); strcat(gabung, "|"); strcat(gabung, nm_barang); strcat(gabung, "|"); strcat(gabung, str_stok); strcat(gabung, "|"); strcat(gabung, str_harga);
+	fputs(gabung, fptr);
+	fclose(fptr);
 }
 void addStok () {
 	printf ("\nNULL\n");
@@ -254,8 +260,42 @@ int main () {
 				jualBarang ();
 				troli ();
 			}
-			else if (pilih == 2) {
-				addBarang ();
+			else if (pilih == 2) {  // Tambah Barang
+				printf("Tambah Data \n\n");
+				char code[9], nm_barang[75];
+				int stok, harga;
+				char buffer[255], data[4][100];
+				bool isThere = false;
+				FILE *fptr;
+				
+				do
+				{
+					isThere = false;
+					printf("Kode Barang   : "); scanf("%s", code); fflush(stdin);
+					printf("Nama Barang   : "); gets(nm_barang); fflush(stdin);
+					printf("Jumlah Barang : "); scanf("%d", &stok);
+					printf("Harga         : Rp."); scanf("%d", &harga);
+					
+					fptr = fopen("file/data.dat", "r");
+					while(!feof(fptr))
+					{
+						fgets(buffer, sizeof(buffer), fptr);
+						explode(buffer, data, '|');
+						
+						if(strcmp(data[0], code) == 0)
+						{
+							isThere = true;
+							system("cls");
+							// showList();
+							printf("Tambah Data Barang \n\n");
+							printf("Kode Barang Sudah Terpakai!! \n");
+							printf("Gunakan Kode lainnya!!! \n\n");
+						}
+					}
+					fclose(fptr);
+				} while (isThere == true);
+				
+				addBarang(&code[0], &nm_barang[0], &stok, &harga);
 			}
 			else if (pilih == 3) {
 				addStok ();
