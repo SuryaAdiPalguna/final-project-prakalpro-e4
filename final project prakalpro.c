@@ -186,7 +186,11 @@ void registrasi () {
 	printf("\n\n                               Registrasi Berhasil");
 }
 void showList () {
-	printf ("\nNULL\n");
+	printf("List Barang [ TOMART ]\n\n");
+	printf("=================================================================\n");
+	printf("||=============================================================||\n");
+	printf("||        Nama Barang       ||  Kode Barang  ||  Harga Barang  ||\n");
+	printf("=================================================================\n");
 }
 void jualBarang () {
 	printf ("\nNULL\n");
