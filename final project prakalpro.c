@@ -116,75 +116,76 @@ void login () {
 	} while (isThere == false);
 }
 
-void registrasi () {
+void registrasi(){
 	system ("cls");
 	printf ("\nREGISTRASI");
 	printf ("\n=============================================\n");
+	
 	//operasi file
 	char nama[50], rep_pass[50], join[50];
 	bool isThere;
 	char buffer[255];
 	char data[3][100];
+	
+	//FILE POINTER
 	FILE *fptr;
 	
-	do
-	{
-		isThere = false;
-		fflush(stdin);
+	do{
+		isThere = false; fflush(stdin);
 		printf(" Masukan Nama      : "); gets(nama); fflush(stdin);
 		printf(" Masukan Username  : "); gets(user); fflush(stdin);
 		printf(" Masukan Password  : "); gets(pass); fflush(stdin);
 		printf(" Ulangi Password   : "); gets(rep_pass); fflush(stdin); 
 		
-		if(strcmp(pass, rep_pass) == 0)
-		{
+		if(strcmp(pass, rep_pass) == 0){
 			fptr = fopen("file/akun.dat", "r");
-			while(!feof(fptr))
-			{
+			
+			while(!feof(fptr)){
 				fgets(buffer, sizeof(buffer), fptr);
 				explode(buffer, data, '|');
 				
-				if(strcmp(data[0], user) == 0)
-				{
-					isThere = true;
-					system("cls");
+				if(strcmp(data[0], user) == 0){
+					isThere = true; system("cls");
 					printf("\n REGISTRASI \n");
 					printf(" ============================================= \n");
 					printf("\n Maaf, Username sudah terpakai! \n");
-					printf(" Gunakan Username lainnya!!! \n\n");
+					printf(" Gunakan Username lainnya!!! \n");
+					printf(" ============================================= \n\n");
 				}
-			}
-			fclose(fptr);
+			} fclose(fptr);
 			
-			if(isThere == false)
-			{
+			if(isThere == false){
 				char gabung[60] = "";
 				fptr = fopen("file/akun.dat", "a");
+				
 				// menggabungkan string
-				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "|"); strcat(gabung, pass); strcat(gabung, "|"); strcat(gabung, "1");
-				fputs(gabung, fptr);
-				fclose(fptr);
+				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "|"); strcat(gabung, pass); 
+				strcat(gabung, "|"); strcat(gabung, "1");
+				fputs(gabung, fptr);fclose(fptr);
 				
 				fptr = fopen("file/saldo.dat", "a");
+				
 				memset(gabung, 0, sizeof(gabung));
-				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "|"); strcat(gabung, nama); strcat(gabung, "|"); strcat(gabung, "0");
-				fputs(gabung, fptr);
-				fclose(fptr);
+				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "|"); 
+				strcat(gabung, nama); strcat(gabung, "|"); strcat(gabung, "0");
+				
+				fputs(gabung, fptr); fclose(fptr);
 			}
 		}
-		else
-		{
+		else{
 			system("cls");
 			printf("\n REGISTRASI \n");
 			printf(" ============================================= \n");
 			printf(" Password tidak singkron!! \n\n");
-			isThere = 1;
-			continue;
+			printf(" Masukkan Ulang!!! \n\n");
+			printf(" ============================================= \n"); isThere = 1;
 		}
-	} while (isThere == 1);
+	}while (isThere == 1);
+	
 	system("cls");
 	printf("\n\n                               Registrasi Berhasil");
 }
+
 void showList () {
 	printf("List Barang [ TOMART ]\n\n");
 	printf("=================================================================\n");
