@@ -227,8 +227,18 @@ void beliBarang () {
 	printf ("\nNULL\n");
 }
 void cekSaldo () {
+	int cek_saldo;
+	char cekUser[100], cekNama[100];
 	//operasi file
-	printf ("\nSaldo anda saat ini = Rp. %d");
+	FILE *saldo = fopen ("file/saldo.dat", "r+");
+	while (!feof (saldo)) {
+		fscanf (saldo, "%s#%[^#]s%d, &cekUser, &cekNama, &cek_saldo);
+		if (strcmp (cekUser, user) == 0) {
+			printf ("\nSaldo anda saat ini = Rp. %d", cek_saldo);
+			break;
+		}
+	}
+	fclose (saldo);
 	printf ("\nNULL\n");
 }
 void addSaldo () {
@@ -236,7 +246,19 @@ void addSaldo () {
 	printf ("SALDO\n");
 	printf ("=======================\n");
 	//operasi file
-	printf ("Saldo Anda saat ini : Rp. %d\n\n");
+	int cek_saldo;
+	char cekUser[100], cekNama[100];
+	//operasi file
+	FILE *saldo = fopen ("file/saldo.dat", "r+");
+	while (!feof (saldo)) {
+		fscanf (saldo, "%s#%[^#]s%d, &cekUser, &cekNama, &cek_saldo);
+		if (strcmp (cekUser, user) == 0) {
+			printf ("\nSaldo anda saat ini = Rp. %d", cek_saldo);
+			break;
+		}
+	}
+	fclose (saldo);
+	//opfile untuk tambah saldo lain lagi
 	printf ("Masukkan Jumlah yang ingin ditambahkan : Rp. "); scanf ("%d");
 	//proses dan operasi file
 	printf ("Saldo berhasil ditambahkan\n");
