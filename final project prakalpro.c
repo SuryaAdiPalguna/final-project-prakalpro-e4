@@ -42,11 +42,6 @@ int Menu () {
 	int pilih;
 	// admin menu
 	if (session_log == 2) {
-		system ("cls");
-		printf ("=======================================================\n");
-		printf ("                        TO MART\n");
-		printf ("=======================================================\n");
-		//operasi file
 		printf ("=======================================================\n");
 		printf ("1. Penjualan\n");
 		printf ("2. Tambah Barang Baru\n");
@@ -59,7 +54,6 @@ int Menu () {
 	}
 	// user menu
 	else {
-		system ("cls");
 		printf ("==========================================\n");
 		printf ("1. Beli Barang\n");
 		printf ("2. Troli - Bayar\n");
@@ -98,7 +92,7 @@ void login () {
 		while(!feof(fptr))
 		{
 			fgets(buffer, sizeof(buffer), fptr);
-			explode(buffer, data, '|');
+			explode(buffer, data, '#');
 			if(strcmp(data[0], username) == 0 && strcmp(data[1], password) == 0)
 			{
 				isThere = true;
@@ -142,7 +136,7 @@ void registrasi(){
 			
 			while(!feof(fptr)){
 				fgets(buffer, sizeof(buffer), fptr);
-				explode(buffer, data, '|');
+				explode(buffer, data, '#');
 				
 				if(strcmp(data[0], user) == 0){
 					isThere = true; system("cls");
@@ -159,15 +153,15 @@ void registrasi(){
 				fptr = fopen("file/akun.dat", "a");
 				
 				// menggabungkan string
-				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "|"); strcat(gabung, pass); 
-				strcat(gabung, "|"); strcat(gabung, "1");
+				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "#"); strcat(gabung, pass); 
+				strcat(gabung, "#"); strcat(gabung, "1");
 				fputs(gabung, fptr);fclose(fptr);
 				
 				fptr = fopen("file/saldo.dat", "a");
 				
 				memset(gabung, 0, sizeof(gabung));
-				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "|"); 
-				strcat(gabung, nama); strcat(gabung, "|"); strcat(gabung, "0");
+				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "#"); 
+				strcat(gabung, nama); strcat(gabung, "#"); strcat(gabung, "0");
 				
 				fputs(gabung, fptr); fclose(fptr);
 			}
@@ -187,11 +181,23 @@ void registrasi(){
 }
 
 void showList () {
-	printf("List Barang [ TOMART ]\n\n");
-	printf("=================================================================\n");
-	printf("||=============================================================||\n");
-	printf("||        Nama Barang       ||  Kode Barang  ||  Harga Barang  ||\n");
-	printf("=================================================================\n");
+	printf("=======================================================\n");
+	printf("                        TO MART\n");
+	printf("=======================================================\n");
+	printf("Kode Barang \tNama Barang \tStok \tHarga Barang \t\n");
+	printf("=======================================================\n");
+	
+	char buffer[255];
+	char data[4][100];
+	
+	FILE *fptr = fopen("file/data.dat", "r");
+			
+	while(!feof(fptr)){
+		fgets(buffer, sizeof(buffer), fptr);
+		explode(buffer, data, '#');
+		
+		printf("%s \t\t%s\t%s\tRp. %s \n", data[0], data[1], data[2], data[3]);
+	} fclose(fptr);
 }
 void jualBarang () {
 	printf ("\nNULL\n");
@@ -204,7 +210,7 @@ void addBarang(char *code, char *nm_barang, int *stok, int *harga) {
 	FILE *fptr = fopen("file/data.dat", "a");
 	itoa(*stok, str_stok, 10);
 	itoa(*harga, str_harga, 10);
-	strcat(gabung, "\n"); strcat(gabung, code); strcat(gabung, "|"); strcat(gabung, nm_barang); strcat(gabung, "|"); strcat(gabung, str_stok); strcat(gabung, "|"); strcat(gabung, str_harga);
+	strcat(gabung, "\n"); strcat(gabung, code); strcat(gabung, "#"); strcat(gabung, nm_barang); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
 	fputs(gabung, fptr);
 	fclose(fptr);
 }
@@ -259,7 +265,8 @@ int main () {
 	
 	if (strcmp(session_us, "") != 0 && session_log == 2) {
 		do {
-			showList ();
+			system("cls");
+			showList();
 			pilih = Menu();
 			if (pilih == 1) {
 				jualBarang ();
@@ -285,7 +292,7 @@ int main () {
 					while(!feof(fptr))
 					{
 						fgets(buffer, sizeof(buffer), fptr);
-						explode(buffer, data, '|');
+						explode(buffer, data, '#');
 						
 						if(strcmp(data[0], code) == 0)
 						{
@@ -323,7 +330,8 @@ int main () {
 	}
 	else if (strcmp(session_us, "") != 0 && session_log == 1) {
 		do {
-			showList ();
+			system("cls");
+			showList();
 			pilih = Menu();
 			if (pilih == 1) {
 				beliBarang ();
