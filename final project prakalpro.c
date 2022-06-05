@@ -567,14 +567,12 @@ void addStok(){
 	fflush(stdin); gets(detect);
 	
 	printf("\nKode Barang \t Nama Barang \t Stock \t Harga \n");
-	char ch;
 	while(!feof(read)){
 		fgets(str , sizeof(str) , read);
 		explode(str , data , '#');
 		
 		strcpy(Brg[i].kode_brg , data[0]); strcpy(Brg[i].nama_brg , data[1]);
 		Brg[i].stok_brg = atoi(data[2]); Brg[i].harga_brg = atoi(data[3]);
-		
 		i++;
 	}fclose(read);
 	
@@ -588,9 +586,7 @@ void addStok(){
 			BRG_STOCK = BRG_STOCK + tempStock;
 			break;
 		}
-		else{
-			printf("Data Tidak Ditemukan.\n");
-		}
+		else{ printf("Data Tidak Ditemukan.\n"); }
 	}
 	
 	// WRITE STUFF TO DATA
@@ -602,6 +598,7 @@ void addStok(){
 			char gabung[255] = "";
 			itoa(BRG_STOCK, str_stok , 10);
 			itoa(Brg[j].harga_brg, str_harga, 10);
+			
 			if(j != 0) strcat(gabung, "\n");
 			strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
 			fputs(gabung, write);
@@ -610,6 +607,7 @@ void addStok(){
 			char gabung[255] = "";
 			itoa(Brg[j].stok_brg, str_stok , 10);
 			itoa(Brg[j].harga_brg, str_harga, 10);
+			
 			if(j != 0) strcat(gabung, "\n");
 			strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
 			fputs(gabung, write);
