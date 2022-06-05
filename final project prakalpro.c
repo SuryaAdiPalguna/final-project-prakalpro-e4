@@ -103,6 +103,8 @@ void login () {
 			if(strcmp(data[0], username) == 0 && strcmp(data[1], password) == 0)
 			{
 				isThere = true;
+				strcpy (user, data[0]);
+				strcpy (pass, data[1]);
 				strcpy(session_us, data[0]);
 				session_log = atoi(data[2]);
 			}
@@ -324,7 +326,7 @@ void jualBarang() {
 			} while(isEnough == false);
 		} // isStok
 	} // isThere
-	else printf("Kode Penerbangan Tidak Ditemukan!! \n");
+	else printf("Kode Barang Tidak Ditemukan!! \n");
 }
 void troli () {
 	printf ("\nNULL\n");
@@ -437,8 +439,78 @@ void addSaldo () {
 	system ("cls");
 	printf ("SALDO\n");
 	printf ("=======================\n");
+	
+	int saldo;
+	
+	
+	char buffer[255], data[5][100];
+	bool isThere = false;
+	FILE *fptr = fopen("file/saldo.dat", "r");
+	
+	printf("Masukkan NIM Mahasiswa yang ingin Diedit : "); scanf("%s", &nim);
+	
+	int i = 0;
+	while(fgets(buffer, sizeof(buffer), fptr) != NULL) {
+		explode(buffer, data, '#');
+		i++;
+		if(strcmp(data[0], nim) == 0) {
+			isThere = true;
+			break;
+		}
+	}
+	fclose(fptr);
+	
+	fflush(stdin);
+	if(isThere == true) {
+		char nama_lengkap[80], alamat[100], no_hp[15];
+		int ipk;
+		
+		printf("\nNama Lengkap : "); gets(nama_lengkap); fflush(stdin);
+		printf("IPK          : "); scanf("%d", &ipk); fflush(stdin);
+		printf("Alamat       : "); gets(alamat); fflush(stdin);
+		printf("No. HP       : "); gets(no_hp); fflush(stdin);
+		
+		editProses(&nim[0], &nama_lengkap[0], &ipk, &alamat[0], &no_hp[0], (i-1));
+	} else {
+		printf("\nMahasiswa dengan NIM tersebut tidak ditemukan!!!\n");
+	}
+	
+	char str_ipk[10];
+	char buffer[255], data[5][100];
+	
+	FILE *fptr = fopen("storage/data_mhs.dat", "r");
+	int i = 0;
+	while(fgets(buffer, sizeof(buffer), fptr) != NULL) {
+		explode(buffer, data, '#');
+		strcpy(Mhs[i].nim, data[0]);
+		strcpy(Mhs[i].nama_lengkap, data[1]);
+		Mhs[i].ipk = atoi(data[2]);
+		strcpy(Mhs[i].alamat, data[3]);
+		strcpy(Mhs[i].no_hp, data[4]);
+		i++;
+	}
+	fclose(fptr);
+	
+	strcpy(Mhs[baris].nim, nim);
+	strcpy(Mhs[baris].nama_lengkap, nama_lengkap);
+	Mhs[baris].ipk = *ipk;
+	strcpy(Mhs[baris].alamat, alamat);
+	strcpy(Mhs[baris].no_hp, no_hp);
+	
+	fptr = fopen("storage/data_mhs.dat", "w"); fclose(fptr);
+	int j;
+	fptr = fopen("storage/data_mhs.dat", "a");
+	for(j=0; j<i; j++) {
+		char gabung[255] = "";
+		itoa(Mhs[j].ipk, str_ipk, 10);
+		strcat(gabung, Mhs[j].nim); strcat(gabung, "#"); strcat(gabung, Mhs[j].nama_lengkap); strcat(gabung, "#"); strcat(gabung, str_ipk); strcat(gabung, "#"); strcat(gabung, Mhs[j].alamat); strcat(gabung, "#"); strcat(gabung, Mhs[j].no_hp);
+		if(baris == j) strcat(gabung, "\n");
+		fputs(gabung, fptr);
+	}
+	fclose(fptr);
+	
 	//operasi file
-	printf ("Saldo Anda saat ini : Rp. %d\n\n");
+	/*printf ("Saldo Anda saat ini : Rp. %d\n\n");
 	int cek_saldo;
 	char cekUser[100], cekNama[100];
 	//operasi file
@@ -453,7 +525,8 @@ void addSaldo () {
 	fclose (saldo);
 	//opfile untuk tambah saldo lain lagi
 	printf ("Masukkan Jumlah yang ingin ditambahkan : Rp. "); scanf ("%d");
-	//proses dan operasi file
+	//proses dan operasi file*/
+	
 	printf ("Saldo berhasil ditambahkan\n");
 }
 void showLaporan (char user[60]) {
@@ -511,6 +584,7 @@ int main () {
 	while (repeat == true) {
 		pilih = firstMenu ();
 		if (pilih == 1) {
+			
 			repeat = false;
 			login();
 		}
