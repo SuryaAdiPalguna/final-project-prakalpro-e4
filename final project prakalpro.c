@@ -557,8 +557,64 @@ void addBarang(char *code, char *nm_barang, int *stok, int *harga) {
 	fclose(fptr);
 }
 
-void addStok () {
-	printf ("\nNULL\n");
+void addStok(){
+	// READ STUFF FROM DATA'
+	FILE *read = fopen("file/data.dat" , "r");
+	char detect[100]; char str[255]; char data[4][100]; int i = 0;
+	int tempStock = 0;
+	
+	printf("Masukkan Kode Barang >> : "); 
+	fflush(stdin); gets(detect);
+	
+	printf("\nKode Barang \t Nama Barang \t Stock \t Harga \n");
+	char ch;
+	while(!feof(read)){
+		fgets(str , sizeof(str) , read);
+		explode(str , data , '#');
+		
+		strcpy(Brg[i].kode_brg , data[0]); strcpy(Brg[i].nama_brg , data[1]);
+		Brg[i].stok_brg = atoi(data[2]); Brg[i].harga_brg = atoi(data[3]);
+		
+		i++;
+	}fclose(read);
+	
+	int j = 0; int BRG_STOCK;
+	for(j; j < i; j++){
+		if(strcmp(Brg[j].kode_brg , detect) == 0){
+			printf("%s \t\t %s \t %d \t %d" , Brg[j].kode_brg , Brg[j].nama_brg , Brg[j].stok_brg , Brg[j].harga_brg);
+			tempStock = Brg[j].stok_brg;
+			
+			printf("\n\nMasukkan Jumlah Stock >> : "); scanf("%d" , &BRG_STOCK);
+			BRG_STOCK = BRG_STOCK + tempStock;
+			break;
+		}
+		else{
+			printf("Data Tidak Ditemukan.\n");
+		}
+	}
+	
+	// WRITE STUFF TO DATA
+	FILE *write = fopen("file/data.dat" , "w");
+	char str_stok[100]; char str_harga[1000];
+	for(j = 0; j < i; j++){
+		
+		if(strcmp(Brg[j].kode_brg , detect) == 0){
+			char gabung[255] = "";
+			itoa(BRG_STOCK, str_stok , 10);
+			itoa(Brg[j].harga_brg, str_harga, 10);
+			if(j != 0) strcat(gabung, "\n");
+			strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+			fputs(gabung, write);
+		}
+		else{
+			char gabung[255] = "";
+			itoa(Brg[j].stok_brg, str_stok , 10);
+			itoa(Brg[j].harga_brg, str_harga, 10);
+			if(j != 0) strcat(gabung, "\n");
+			strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+			fputs(gabung, write);
+		}
+	}fclose(write);
 }
 
 void editProses(char *kode_brg, char *nama_brg, int *stok_brg, int *harga_brg, int baris) {
