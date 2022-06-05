@@ -341,9 +341,76 @@ void addBarang(char *code, char *nm_barang, int *stok, int *harga) {
 void addStok () {
 	printf ("\nNULL\n");
 }
-void editBarang () {
-	printf ("\nNULL\n");
+void editBarang() {
+	system("cls");
+	printf("Edit Data \n");
+	printf("==================\n\n");
+	char kode_brg[30];
+	char buffer[255], data[4][100];
+	bool isThere = false;
+	FILE *fptr = fopen("file/data.dat", "r");
+
+	printf("Masukkan Kode data yang ingin Diedit : "); scanf("%s", &kode_brg);
+
+	int i = 0;
+	while(fgets(buffer, sizeof(buffer), fptr) != NULL) {
+		explode(buffer, data, '#');
+		i++;
+		if(strcmp(data[0], kode_brg) == 0) {
+			isThere = true;
+			break;
+		}
+	}
+	fclose(fptr);
+
+	fflush(stdin);
+	if(isThere == true) {
+		char nama_brg[50];
+		int stok_brg, harga_brg;
+
+		printf("\nNama Barang : "); gets(nama_brg); fflush(stdin);
+		printf("Jumlah        : "); scanf("%d", &stok_brg); fflush(stdin);
+		printf("Harga         : "); scanf("%d", &harga_brg); fflush(stdin);
+
+		editProses(&kode_brg[0], &nama_brg[0], &stok_brg, &harga_brg, (i-1));
+	} else {
+		printf("\nTidak terdapat barang dengan Kode tersebut!!!\n");
+	}
 }
+void editProses(char *kode_brg, char *nama_brg, int *stok_brg, int *harga_brg, int baris) {
+	char str_stok[20], str_harga[20];
+	char buffer[255], data[4][100];
+
+	FILE *fptr = fopen("file/data.dat", "r");
+	int i = 0;
+	while(fgets(buffer, sizeof(buffer), fptr) != NULL) {
+		explode(buffer, data, '#');
+		strcpy(Brg[i].kode_brg, data[0]);
+		strcpy(Brg[i].nama_brg, data[1]);
+		Brg[i].stok_brg = atoi(data[2]);
+		Brg[i].harga_brg = atoi(data[3]);
+		i++;
+	}
+	fclose(fptr);
+
+	strcpy(Brg[baris].kode_brg, kode_brg);
+	strcpy(Brg[baris].nama_brg, nama_brg);
+	Brg[baris].stok_brg = *stok_brg;
+	Brg[baris].harga_brg = *harga_brg;
+	fptr = fopen("file/data.dat", "w"); fclose(fptr);
+	int j;
+	fptr = fopen("file/data.dat", "a");
+	for(int j=0; j<i; j++) {
+		char gabung[255] = "";
+		itoa(Brg[j].stok_brg, str_stok, 10);
+		itoa(Brg[j].harga_brg, str_harga, 10);
+		strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+		if(baris == j) strcat(gabung, "\n");
+		fputs(gabung, fptr);
+	}
+	fclose(fptr);
+}
+
 void hapusBarang () {
 	printf ("\nNULL\n");
 }
