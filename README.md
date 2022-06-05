@@ -10,7 +10,7 @@
 
 ## Contributor 
 1. Faisal Afandi { Click [here](https://github.com/mfaisalafandi) my Profile. }
-2. Gung Krisna   { Click [here](imkzuma.github.io) my Profile. }
+2. Gung Krisna   { Click [here](https://imkzuma.github.io) my Profile. }
 3. Adi Palguna   { Click [here](https://github.com/SuryaAdiPalguna) my Profile. }
 4. Widi Arsa     { Click [here](https://github.com/widiarsaea16) my Profile. }  
 
