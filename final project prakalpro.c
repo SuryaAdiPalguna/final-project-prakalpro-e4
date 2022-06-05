@@ -600,7 +600,9 @@ void addStok(){
 			itoa(Brg[j].harga_brg, str_harga, 10);
 			
 			if(j != 0) strcat(gabung, "\n");
-			strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+			strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); 
+			strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+			
 			fputs(gabung, write);
 		}
 		else{
@@ -609,7 +611,9 @@ void addStok(){
 			itoa(Brg[j].harga_brg, str_harga, 10);
 			
 			if(j != 0) strcat(gabung, "\n");
-			strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+			strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); 
+			strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+			
 			fputs(gabung, write);
 		}
 	}fclose(write);
@@ -725,7 +729,9 @@ void hapusBarang(){
 					itoa(Brg[j].harga_brg, str_harga, 10);
 					
 					if(j != 0) strcat(gabung, "\n");
-					strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+					strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); 
+					strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+					
 					fputs(gabung, write);
 				}
 			}fclose(write);
