@@ -4,12 +4,19 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <time.h>
 
 char user[50], pass[50];
 char session_us[50];
 int session_log = 0;
 
-void explode(char text[100], char data[5][100], char separator){
+struct Barang {
+	char kode_brg[30], nama_brg[50];
+	int stok_brg, harga_brg;
+};
+struct Barang Brg[255];
+
+void explode(char text[100], char data[6][100], char separator){
 	int i, firstI = 0, secondI = 0;
 	memset(data[0], 0, sizeof(data[0]));
 	for(i=0; i<strlen(text); i++)
@@ -187,20 +194,137 @@ void showList () {
 	printf("Kode Barang \tNama Barang \tStok \tHarga Barang \t\n");
 	printf("=======================================================\n");
 	
-	char buffer[255];
 	char data[4][100];
 	
 	FILE *fptr = fopen("file/data.dat", "r");
 			
 	while(!feof(fptr)){
+		char buffer[255] = "";
 		fgets(buffer, sizeof(buffer), fptr);
 		explode(buffer, data, '#');
 		
-		printf("%s \t\t%s\t%s\tRp. %s \n", data[0], data[1], data[2], data[3]);
+		if(strcmp(buffer, "\n") != 0) printf("%s \t\t%s\t%s\tRp. %s \n", data[0], data[1], data[2], data[3]);
 	} fclose(fptr);
 }
-void jualBarang () {
-	printf ("\nNULL\n");
+
+void jualBarang() {
+	system("cls");
+	showList();
+	printf("\n===============================================\n");
+	printf("Penjualan Barang \n\n");
+	
+	char kode[30], nama_brg[60], nama_pembeli[60];
+	int stok, harga, jml_beli;
+	
+	bool isThere = false, isStok = true;
+	char buffer[255];
+	char data[4][100];
+	FILE *fptr;
+	
+	printf("Masukan Kode Barang\n=> "); scanf("%s", kode);
+	fflush(stdin);
+	
+	fptr = fopen("file/data.dat", "r");
+	int i = 0, baris = -1;
+	while(!feof(fptr))
+	{
+		fgets(buffer, sizeof(buffer), fptr);
+		explode(buffer, data, '#');
+		if(strcmp(data[0], kode) == 0) {
+			isThere = true;
+			strcpy(nama_brg, data[1]);
+			stok = atoi(data[2]);
+			harga = atoi(data[3]);
+			
+			printf("Barang tersedia       : %d \n\n", stok);
+			printf("Nama Pembeli          : "); gets(nama_pembeli); fflush(stdin);
+			printf("Jumlah Barang dibeli  : "); scanf("%d", &jml_beli);
+			
+			if(stok < jml_beli) {
+				isStok = false;
+				printf("Maaf, stok kami tidak mencukupi \n");
+				continue;
+			} else baris = i;
+		}
+		
+		strcpy(Brg[i].kode_brg, data[0]);
+		strcpy(Brg[i].nama_brg, data[1]);
+		Brg[i].stok_brg = atoi(data[2]);
+		Brg[i].harga_brg = atoi(data[3]);
+		i++;
+	}
+	fclose(fptr);
+	
+	if(isThere == true)
+	{
+		if(isStok == true)
+		{
+			int isEnough = true;
+			int bayar, t_harga = harga * jml_beli;
+			stok = stok - jml_beli;
+			do
+			{
+				printf("==================================== \n");
+				printf("Total Harga        = Rp. %d \n", t_harga);
+				printf("Masukan Pembayaran = Rp. "); scanf("%d", &bayar);
+				
+				if(bayar >= t_harga)
+				{
+					int kembalian = bayar - t_harga;
+					printf("==================================== \n");
+					printf("Kembalian   = Rp. %d \n", kembalian);
+					isEnough = true;
+					
+					Brg[baris].stok_brg = stok;
+					
+					fptr = fopen("file/data.dat", "w"); fclose(fptr);
+					int j;
+					fptr = fopen("file/data.dat", "a");
+					for(j=0; j<i; j++) {
+						char gabung[255] = "", str_stok[5], str_harga[30];
+						itoa(Brg[j].stok_brg, str_stok, 10);
+						itoa(Brg[j].harga_brg, str_harga, 10);
+						if(j != 0) strcat(gabung, "\n");
+						strcat(gabung, Brg[j].kode_brg); strcat(gabung, "#"); strcat(gabung, Brg[j].nama_brg); strcat(gabung, "#"); strcat(gabung, str_stok); strcat(gabung, "#"); strcat(gabung, str_harga);
+						fputs(gabung, fptr);
+					}
+					fclose(fptr);
+					
+					fptr = fopen("file/laporan.dat", "a");
+					
+					// get Time
+					time_t now;
+					time(&now);
+					struct tm *local = localtime(&now);
+					
+				    char gabung_t[15] = "", tgl[2], bln[2], thn[4], jam[2], men[2], det[2];
+				    itoa(local->tm_mday, tgl, 10);
+				    itoa(local->tm_mon + 1, bln, 10);
+				    itoa(local->tm_year + 1900, thn, 10);
+				    itoa(local->tm_hour, jam, 10);
+				    itoa(local->tm_min, men, 10);
+				    itoa(local->tm_sec, det, 10);
+				    
+					strcat(gabung_t, tgl); strcat(gabung_t, "-"); strcat(gabung_t, bln); strcat(gabung_t, "-"); strcat(gabung_t, thn); strcat(gabung_t, " "); 
+					strcat(gabung_t, jam); strcat(gabung_t, ":"); strcat(gabung_t, men); strcat(gabung_t, ":"); strcat(gabung_t, det); 
+					
+					char gabung[255] = "", str_jml_beli[5], str_t_harga[10];
+					itoa(jml_beli, str_jml_beli, 10);
+					itoa(t_harga, str_t_harga, 10);
+					strcat(gabung, "\n"); strcat(gabung, "1"); strcat(gabung, "#"); strcat(gabung, nama_pembeli); strcat(gabung, "#"); strcat(gabung, nama_brg); strcat(gabung, "#"); 
+					strcat(gabung, str_jml_beli); strcat(gabung, "#"); strcat(gabung, str_t_harga); strcat(gabung, "#"); strcat(gabung, gabung_t); 
+					
+					fputs(gabung, fptr);
+					fclose(fptr);
+				}
+				else {
+					printf("\nMaaf, uang anda kurang! \n");
+					isEnough = false;
+				}
+			} while(isEnough == false);
+		} // isStok
+	} // isThere
+	else printf("Kode Penerbangan Tidak Ditemukan!! \n");
 }
 void troli () {
 	printf ("\nNULL\n");
@@ -230,6 +354,7 @@ void cekSaldo () {
 	int cek_saldo;
 	char cekUser[100], cekNama[100];
 	//operasi file
+	printf ("\nSaldo anda saat ini = Rp. %d");
 	FILE *saldo = fopen ("file/saldo.dat", "r+");
 	while (!feof (saldo)) {
 		fscanf (saldo, "%s#%[^#]s%d, &cekUser, &cekNama, &cek_saldo);
@@ -246,6 +371,7 @@ void addSaldo () {
 	printf ("SALDO\n");
 	printf ("=======================\n");
 	//operasi file
+	printf ("Saldo Anda saat ini : Rp. %d\n\n");
 	int cek_saldo;
 	char cekUser[100], cekNama[100];
 	//operasi file
@@ -263,8 +389,52 @@ void addSaldo () {
 	//proses dan operasi file
 	printf ("Saldo berhasil ditambahkan\n");
 }
-void showLaporan (int session_us) {
-	printf ("\nNULL\n");
+void showLaporan (char user[60]) {
+	system("cls");
+	printf(" ========================================================================== \n");
+	printf(" ||                           DAFTAR LAPORAN                             || \n");
+	printf(" ========================================================================== \n\n");
+	
+	int i = 1, untung = 0, total_jual = 0;
+	char buffer[255] = "";
+	char data[6][100];
+	
+	printf(" Waktu \n");
+	printf(" Nama Pembeli\t\tNama Barang \t\tJml. Beli \tT. Harga \t \n");
+	printf(" ==========================================================================\n");
+	int *ptr_untung = &untung, *ptr_jual = &total_jual;
+
+	FILE *fptr = fopen("file/laporan.dat", "r");
+	if(strcmp(user, "1") == 0) {
+		while(!feof(fptr)){
+			fgets(buffer, sizeof(buffer), fptr);
+			explode(buffer, data, '#');
+			
+			if(strcmp(data[0], " ") != 0) {
+				printf(" %s \n", data[5]);
+				printf(" %d. %s \t%s \t\t %s \t\tRp. %s \n\n", i, data[1], data[2], data[3], data[4]);
+				i++;
+				*ptr_jual += atoi(data[3]);
+				*ptr_untung += atoi(data[4]);
+			}
+		}
+	}
+	else {
+		while(!feof(fptr)){
+			fgets(buffer, sizeof(buffer), fptr);
+			explode(buffer, data, '#');
+			if(strcmp(data[0], user) == 0) {
+				printf(" %s \n", data[5]);
+				printf(" %d. %s \t%s \t\t %s \t\tRp. %s \n\n", i, data[1], data[2], data[3], data[4]);
+				i++;
+				*ptr_jual += atoi(data[3]);
+				*ptr_untung += atoi(data[4]);
+			}
+		}
+	}
+	printf(" ========================================================================== \n");
+	printf("\t\t\t\t\t\t %d \t\tRp. %d  \n", *ptr_jual, *ptr_untung);
+	fclose(fptr);
 }
 
 int main () {
@@ -341,7 +511,7 @@ int main () {
 				hapusBarang ();
 			}
 			else if (pilih == 6) {
-				showLaporan (1);
+				showLaporan("1");
 			}
 			else {
 				jualBarang ();
@@ -368,7 +538,7 @@ int main () {
 				addSaldo ();
 			}
 			else if (pilih == 5) {
-//				showLaporan(session_us);
+				showLaporan(session_us);
 			}
 			else {
 				jualBarang ();
