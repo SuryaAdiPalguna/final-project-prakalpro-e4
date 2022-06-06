@@ -816,25 +816,20 @@ void addSaldo () {
 	printf ("Masukkan Jumlah yang ingin ditambahkan : Rp. "); scanf ("%d", &tambah);
 	
 	//proses dan operasi file
-	bool isThere = false;
 	char buffer[255] = "";
 	char data[3][100];
 	
 	FILE *fptr = fopen("file/saldo.dat", "r");
-	int i = 0;
+	int i = 0, j;
 	while(!feof(fptr)){
 		fgets(buffer, sizeof(buffer), fptr);
 		explode(buffer, data, '#');
-		if(strcmp(data[0], session_us) == 0) {
-			isThere = true;
-			Kredit[i].t_saldo = atoi (data[2]) + tambah;
-		}
-		else {
-			Kredit[i].t_saldo = atoi (data[2]);
-		}
-		strcpy (Kredit[i].user, data[0]);
-		strcpy (Kredit[i].nama, data[1]);
-		Kredit[i].t_saldo = atoi (data[2]);
+		
+		Kredit[i].t_saldo = atoi(data[2]);
+		if(strcmp(data[0], session_us) == 0) 
+			Kredit[i].t_saldo += tambah;
+		strcpy(Kredit[i].user, data[0]);
+		strcpy(Kredit[i].nama, data[1]);
 		i++;
 	}
 	fclose(fptr);
@@ -843,9 +838,10 @@ void addSaldo () {
 	fptr = fopen("file/saldo.dat", "a");
 	for(j=0; j<i; j++) {
 		char gabung[255] = "", str_saldo[30];
-		itoa(Kredit[j].t_saldo, str_saldo, 30);
+		itoa(Kredit[j].t_saldo, str_saldo, 10);
 		if(j != 0) strcat(gabung, "\n");
 		strcat(gabung, Kredit[j].user); strcat(gabung, "#"); strcat(gabung, Kredit[j].nama); strcat(gabung, "#"); strcat(gabung, str_saldo);
+		fputs(gabung, fptr);
 	}
 	fclose(fptr);
 	
@@ -994,7 +990,7 @@ int main () {
 				troli();
 			}
 			else if (pilih == 3) {
-				printf("\nSaldo anda saat ini = %d\n", cekSaldo());
+				printf("\nSaldo anda saat ini = Rp. %d\n", cekSaldo());
 			}
 			else if (pilih == 4) {
 				addSaldo();
