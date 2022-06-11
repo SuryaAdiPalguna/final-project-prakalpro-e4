@@ -920,7 +920,6 @@ int main () {
 			pilih = Menu();
 			if (pilih == 1) {
 				jualBarang ();
-				troli ();
 			}
 			else if (pilih == 2) {  // Tambah Barang
 				printf("Tambah Data \n\n");
