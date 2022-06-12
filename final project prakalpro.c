@@ -29,15 +29,12 @@ struct Barang Brg[255];
 void explode(char text[100], char data[6][100], char separator){
 	int i, firstI = 0, secondI = 0;
 	memset(data[0], 0, sizeof(data[0]));
-	for(i=0; i<strlen(text); i++)
-	{
-		if(text[i] == separator)
-		{
+	for(i=0; i<strlen(text); i++) {
+		if(text[i] == separator) {
 			firstI += 1; secondI = 0;
 			memset(data[firstI], 0, sizeof(data[firstI]));
 		}
-		else if(text[i] != '\n' || text[i] != '\0')
-		{
+		else if(text[i] != '\n' || text[i] != '\0') {
 			data[firstI][secondI] = text[i];
 			secondI++;
 		}
@@ -119,7 +116,6 @@ void login () {
 		printf ("\n                                 Masukan Password : ");
 		printf ("\n                            --------------------------");
 		printf ("\n                                 ---> "); gets (password); fflush (stdin); 
-		
 		fptr = fopen("file/akun.dat", "r");
 		while(!feof(fptr))
 		{
@@ -190,14 +186,13 @@ void registrasi(){
 				// menggabungkan string
 				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "#"); strcat(gabung, pass); 
 				strcat(gabung, "#"); strcat(gabung, "1");
-				fputs(gabung, fptr);fclose(fptr);
+				fputs(gabung, fptr); fclose(fptr);
 				
 				fptr = fopen("file/saldo.dat", "a");
 				
 				memset(gabung, 0, sizeof(gabung));
 				strcat(gabung, "\n"); strcat(gabung, user); strcat(gabung, "#"); 
 				strcat(gabung, nama); strcat(gabung, "#"); strcat(gabung, "0");
-				
 				fputs(gabung, fptr); fclose(fptr);
 			}
 		}
@@ -820,7 +815,7 @@ void addSaldo () {
 	char data[3][100];
 	
 	FILE *fptr = fopen("file/saldo.dat", "r");
-	int i = 0, j;
+	int i = 0;
 	while(!feof(fptr)){
 		fgets(buffer, sizeof(buffer), fptr);
 		explode(buffer, data, '#');
@@ -834,12 +829,13 @@ void addSaldo () {
 	}
 	fclose(fptr);
 	
+	int j;
 	fptr = fopen("file/saldo.dat", "w"); fclose(fptr);
 	fptr = fopen("file/saldo.dat", "a");
 	for(j=0; j<i; j++) {
 		char gabung[255] = "", str_saldo[30];
 		itoa(Kredit[j].t_saldo, str_saldo, 10);
-		if(j != 0) strcat(gabung, "\n");
+		if(j != 0) {strcat(gabung, "\n");}
 		strcat(gabung, Kredit[j].user); strcat(gabung, "#"); strcat(gabung, Kredit[j].nama); strcat(gabung, "#"); strcat(gabung, str_saldo);
 		fputs(gabung, fptr);
 	}
